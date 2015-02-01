@@ -1,20 +1,33 @@
 * Tangled Emacs Config
 
-** ELPA Repositories
-
-*** TODO Define function to safely load packages
+*** To-Do Items
+    - [X] Define function to safely load packages
+    - [ ] Configure =init.el= to support reading multiple org files
+    - [ ] Configure paths to keep =.emacs.d= as clean as possible
+    - [ ] Configure Magit
+    - [ ] Configure org-go
+    - [ ] Configure ob-go
+    - [X] Add Theme
  
+** ELPA Repositories
 *** Set up package repositories.
     #+begin_src emacs-lisp
-      (setq package-archives
-       	'(("gnu" . "http://elpa.gnu.org/packages/")
-          ("org" . "http://orgmode.org/elpa/")
-          ("melpa" . "http://melp.org/packages/")
-          ("marmalade" . "http://marmalade-repo.org/packages/")))
+      (require 'package)
+      (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+      (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+      (package-initialize)
     #+end_src
 
+    - Create a function to avoid re-installing packages.
+      #+BEGIN_SRC emacs-lisp
+        (defun package-safe-install (&rest packages)
+          (dolist (package packages)
+            (unless (package-installed-p package)
+              (package-install package))
+            (require package)))
+      #+END_SRC
 
-** TODO Default Packages 
+** Default Packages 
    Packages that should be loaded on startup.
    #+name: load-on-startup
    #+begin_src emacs-lisp
@@ -28,6 +41,12 @@
    #+end_src
 
 ** Globals
+
+*** Path Configuration
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'load-path "~/.emacs.d/lisp")
+    #+END_SRC
+
 *** On OSX, change META key from OPTION to COMMAND.
     #+BEGIN_SRC emacs-lisp
       (setq mac-command-modifier 'meta)
@@ -36,9 +55,9 @@
 
 *** Set up global key bindings.
     - Quickly toggle =auto-fill-mode=
-    #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "C-c q") 'auto-fill-mode)
-    #+END_SRC
+      #+BEGIN_SRC emacs-lisp
+        (global-set-key (kbd "C-c q") 'auto-fill-mode)
+      #+END_SRC
 
     - Automatically reindent current line and new line on =RET=
       #+BEGIN_SRC emacs-lisp
@@ -53,7 +72,7 @@
     #+BEGIN_SRC emacs-lisp
       (set-scroll-bar-mode nil)
       (tool-bar-mode 0)
-      (menu-bar-mode 0)
+      (menu-bar-mode 1)
 
       (setf inhibit-startup-screen t
             inhibit-startup-message t
@@ -63,8 +82,6 @@
 
       (setf column-number-mode t)
       (setf size-indication-mode t)
-
-      (setf visible-bell t)
     #+END_SRC
 
 *** Don't create backup files and turn off auto-save
@@ -79,7 +96,6 @@
       (setq ido-enable-prefix nil
             ido-enable-flex-matching t
             ido-create-new-buffer 'always
-            ido-use-filename-at-point t
             ido-max-prospects 10)
     #+END_SRC
 
@@ -97,3 +113,108 @@
     #+BEGIN_SRC emacs-lisp
       (auto-compression-mode t)
     #+END_SRC
+
+*** Miscellaneous Settings
+    #+BEGIN_SRC emacs-lisp
+      (setq show-trailing-whitespace t)
+      (setq column-number-mode t)
+      (setq save-abbrevs nil)
+      (setq suggest-key-bindings t)
+      (setq vc-follow-symlinks t)
+      (fset 'yes-or-no-p 'y-or-n-p)
+      (delete-selection-mode t)
+      (blink-cursor-mode t)
+      (show-paren-mode t)
+    #+END_SRC
+
+* Org Mode
+
+** Org-Mode Packages
+   #+BEGIN_SRC emacs-lisp
+     (require 'org-bullets)
+   #+END_SRC
+** Org-Mode Hook
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'org-mode-hook
+               (lambda ()
+                 (local-set-key "\M-\C-n" 'outline-next-visible-heading)
+                 (local-set-key "\M-\C-p" 'outline-previous-visible-heading)
+                 (local-set-key "\M-\C-u" 'outline-up-heading)
+                 ;; table
+                 (local-set-key "\M-\C-w" 'org-table-copy-region)
+                 (local-set-key "\M-\C-y" 'org-table-paste-rectangle)
+                 (local-set-key "\M-\C-l" 'org-table-sort-lines)
+                 ;; display images
+                 (local-set-key "\M-I" 'org-toggle-iimage-in-org)
+                 (org-bullets-mode 1)))
+   #+END_SRC
+
+** Speed Keys
+   Speed commands enable single-letter commands in Org-mode files when
+   the point is at the beginning of a headline, or at the beginning of
+   a code block.
+
+   See the =org-speed-commands-default= variable for a list of the
+   keys and commands enabled at the beginning of headlines.  All code
+   blocks are available at the beginnign of a code block, the
+   following key sequence =C-c C-v h= (bound to
+   =org-babel-describe-bindings=) will display a list of the code
+   blocks commands and their related keys.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq org-use-speed-commands t)
+   #+END_SRC
+
+** Code Block Fontification
+   The following displays the contents of code blocks in Org-mode
+   files using the major-mode of the code.  It also changes the
+   behavior of =TAB= as if it were used in the appropriate major
+   mode.  This means that reading and editing code from inside your
+   Org-mode files is much more like reading and editing code using its
+   major mode.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq org-src-fontify-natively t)
+     (setq org-src-tab-acts-natively t)
+   #+END_SRC
+   
+** AutoFill Mode
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'org-mode-hook 'turn-on-auto-fill)
+   #+END_SRC
+
+** Indented Mode
+   #+BEGIN_SRC emacs-lisp
+     (setq org-startup-indented t)
+   #+END_SRC
+
+** Personal Configuration
+   This is something that should really be extracted into a separate file.
+
+   *TODO: Verify config & Document components*
+   
+   #+BEGIN_SRC emacs-lisp
+     (setq org-directory "~/org")
+     (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+     (global-set-key "\C-cl" 'org-store-link)
+     (global-set-key "\C-ca" 'org-agenda)
+     (global-set-key "\C-Cr" 'org-capture)
+     (setq org-log-done t)
+
+     (setq org-todo-keywords
+           '((sequence "TODO" "WAIT" "IN-PROGRESS" "DONE")))
+
+     (setq org-default-notes-file (concat org-directory "/notes.org"))
+
+     ;; Org Capture Templates
+     (setq org-capture-templates
+           '(("t" "Todo" entry (file+headline (concat org-directory "/gtd.org") "Tasks")
+              "* TODO %?\n  %i\n")
+             ("j" "Journal" entry (file+datetree "~/org/journal.org")
+              "* %?\nEntered on %U\n  %i\n  %a")))
+   #+END_SRC
+
+* Magit
+#+BEGIN_SRC emacs-lisp
+  (package-safe-install 'magit)
+#+END_SRC
