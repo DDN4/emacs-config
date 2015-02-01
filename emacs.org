@@ -1,0 +1,99 @@
+* Tangled Emacs Config
+
+** ELPA Repositories
+
+*** TODO Define function to safely load packages
+ 
+*** Set up package repositories.
+    #+begin_src emacs-lisp
+      (setq package-archives
+       	'(("gnu" . "http://elpa.gnu.org/packages/")
+          ("org" . "http://orgmode.org/elpa/")
+          ("melpa" . "http://melp.org/packages/")
+          ("marmalade" . "http://marmalade-repo.org/packages/")))
+    #+end_src
+
+
+** TODO Default Packages 
+   Packages that should be loaded on startup.
+   #+name: load-on-startup
+   #+begin_src emacs-lisp
+     (require 'cl)
+     (require 'cl-lib)
+     (require 'ffap)
+     (require 'uniquify)
+     (require 'ansi-color)
+     (require 'recentf)
+     (require 'saveplace)
+   #+end_src
+
+** Globals
+*** On OSX, change META key from OPTION to COMMAND.
+    #+BEGIN_SRC emacs-lisp
+      (setq mac-command-modifier 'meta)
+      (setq mac-option-modifier nil)
+    #+END_SRC
+
+*** Set up global key bindings.
+    - Quickly toggle =auto-fill-mode=
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-c q") 'auto-fill-mode)
+    #+END_SRC
+
+    - Automatically reindent current line and new line on =RET=
+      #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "RET") 'reindent-then-newline-and-indent)      
+      #+END_SRC
+
+    - Kill word backward
+      #+BEGIN_SRC emacs-lisp
+        (global-set-key (kbd "C-M-h") 'backward-kill-word)
+      #+END_SRC
+*** Clean up some of the graphical defaults.
+    #+BEGIN_SRC emacs-lisp
+      (set-scroll-bar-mode nil)
+      (tool-bar-mode 0)
+      (menu-bar-mode 0)
+
+      (setf inhibit-startup-screen t
+            inhibit-startup-message t
+            inhibit-startup-echo-area-message t)
+
+      (setq initial-scratch-message "")
+
+      (setf column-number-mode t)
+      (setf size-indication-mode t)
+
+      (setf visible-bell t)
+    #+END_SRC
+
+*** Don't create backup files and turn off auto-save
+    #+BEGIN_SRC emacs-lisp
+      (setq make-backup-files nil)
+      (setq auto-save-default nil)
+    #+END_SRC
+
+*** Set up ido
+    #+BEGIN_SRC emacs-lisp
+      (ido-mode t)
+      (setq ido-enable-prefix nil
+            ido-enable-flex-matching t
+            ido-create-new-buffer 'always
+            ido-use-filename-at-point t
+            ido-max-prospects 10)
+    #+END_SRC
+
+*** Save a list of recent files visited
+    #+BEGIN_SRC emacs-lisp
+      (recentf-mode 1)
+    #+END_SRC
+
+*** Highlight matching parentheses
+    #+BEGIN_SRC emacs-lisp
+      (show-paren-mode 1)
+    #+END_SRC
+
+*** Transparently open compressed files
+    #+BEGIN_SRC emacs-lisp
+      (auto-compression-mode t)
+    #+END_SRC
