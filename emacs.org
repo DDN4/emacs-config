@@ -4,10 +4,10 @@
     - [X] Define function to safely load packages
     - [ ] Configure =init.el= to support reading multiple org files
     - [ ] Configure paths to keep =.emacs.d= as clean as possible
-    - [ ] Configure Magit
-    - [ ] Configure org-go
+    - [X] Configure Magit
+    - [ ] Configure go-mode
     - [ ] Configure ob-go
-    - [X] Add Theme
+    - [ ] Configure eshell
  
 ** ELPA Repositories
 *** Set up package repositories.
