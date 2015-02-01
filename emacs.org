@@ -1,5 +1,4 @@
-* Tangled Emacs Config
-
+* Emacs Configuration
 ** To-Do Items
     - [X] Define function to safely load packages
     - [ ] Configure =init.el= to support reading multiple org files
@@ -86,6 +85,7 @@
             inhibit-startup-message t
             inhibit-startup-echo-area-message t)
 
+      (setq initial-major-mode 'org-mode)
       (setq initial-scratch-message "")
 
       (setf column-number-mode t)
@@ -144,13 +144,13 @@
       (blink-cursor-mode t)
     #+END_SRC
 
-* Org Mode
+** Org Mode
 
-** Org-Mode Packages
+*** Org-Mode Packages
    #+BEGIN_SRC emacs-lisp
      (require 'org-bullets)
    #+END_SRC
-** Org-Mode Hook
+*** Org-Mode Hook
    #+BEGIN_SRC emacs-lisp
      (add-hook 'org-mode-hook
                (lambda ()
@@ -166,7 +166,7 @@
                  (org-bullets-mode 1)))
    #+END_SRC
 
-** Speed Keys
+*** Speed Keys
    Speed commands enable single-letter commands in Org-mode files when
    the point is at the beginning of a headline, or at the beginning of
    a code block.
@@ -185,7 +185,7 @@
      (setq org-use-speed-commands nil)
    #+END_SRC
 
-** Code Block Fontification
+*** Code Block Fontification
    The following displays the contents of code blocks in Org-mode
    files using the major-mode of the code.  It also changes the
    behavior of =TAB= as if it were used in the appropriate major
@@ -198,17 +198,17 @@
      (setq org-src-tab-acts-natively t)
    #+END_SRC
    
-** AutoFill Mode
+*** AutoFill Mode
    #+BEGIN_SRC emacs-lisp
      (add-hook 'org-mode-hook 'turn-on-auto-fill)
    #+END_SRC
 
-** Indented Mode
+*** Indented Mode
    #+BEGIN_SRC emacs-lisp
      (setq org-startup-indented t)
    #+END_SRC
 
-** Personal Configuration
+*** Personal Configuration
    This is something that should really be extracted into a separate file.
 
    *TODO: Verify config & Document components*
@@ -234,18 +234,18 @@
               "* %?\nEntered on %U\n  %i\n  %a")))
    #+END_SRC
 
-* Magit
+** Magit
 #+BEGIN_SRC emacs-lisp
   (package-safe-install 'magit)
 #+END_SRC
 
-** TODO Document use of Magit
+*** TODO Document use of Magit
 
-** TODO Provide links to useful resources
+*** TODO Provide links to useful resources
 
-** TODO Provide alternative link to =magit-gitflow=
+*** TODO Provide link to =magit-gitflow= 
 
-* Shell
+** Shell
 Set the shell environment to be emacs environment
 #+BEGIN_SRC emacs-lisp
   (require 'exec-path-from-shell)
@@ -253,7 +253,7 @@ Set the shell environment to be emacs environment
     (exec-path-from-shell-initialize))
 #+END_SRC
 
-* Go-mode Configuration
+** Go-mode Configuration
 Extracted from my previous =.emacs= file.
 #+BEGIN_SRC emacs-lisp
    ;; Assumes PATH environment is properly configured
