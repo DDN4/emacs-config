@@ -1,6 +1,6 @@
 * Tangled Emacs Config
 
-*** To-Do Items
+** To-Do Items
     - [X] Define function to safely load packages
     - [ ] Configure =init.el= to support reading multiple org files
     - [ ] Configure paths to keep =.emacs.d= as clean as possible
@@ -11,7 +11,10 @@
       - [X] golint
       - [X] company-go
       - [ ] flycheck
-    - [ ] Configure ob-go
+    - [0/3] Configure Babel for Golang
+      - [ ] configure ob-go
+      - [ ] configure restclient package
+      - [ ] test golang block calling rest api
     - [ ] Configure eshell
  
 ** ELPA Repositories
@@ -109,6 +112,12 @@
       (recentf-mode 1)
     #+END_SRC
 
+*** Fancy Narrowing
+#+BEGIN_SRC emacs-lisp
+  (package-safe-install 'fancy-narrow)
+  (fancy-narrow-mode)
+#+END_SRC
+
 *** Highlight matching parentheses
     #+BEGIN_SRC emacs-lisp
       (show-paren-mode 1)
@@ -130,7 +139,6 @@
       (fset 'yes-or-no-p 'y-or-n-p)
       (delete-selection-mode t)
       (blink-cursor-mode t)
-      (show-paren-mode t)
     #+END_SRC
 
 * Org Mode
@@ -167,8 +175,11 @@
    =org-babel-describe-bindings=) will display a list of the code
    blocks commands and their related keys.
 
+   _Note: Some features seem to break with fancy-narrow package;
+   disabling for now._
+
    #+BEGIN_SRC emacs-lisp
-     (setq org-use-speed-commands t)
+     (setq org-use-speed-commands nil)
    #+END_SRC
 
 ** Code Block Fontification
