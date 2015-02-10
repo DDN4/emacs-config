@@ -10,11 +10,11 @@
       - [X] golint
       - [X] company-go
       - [ ] flycheck
-    - [0/3] Configure Babel for Golang
-      - [ ] configure ob-go
+    - [1/3] Configure Babel for Golang
+      - [X] configure ob-go
       - [ ] configure restclient package
       - [ ] test golang block calling rest api
-    - [ ] Configure eshell
+    - [X] Configure eshell
  
 ** ELPA Repositories
 *** Set up package repositories.
@@ -61,20 +61,25 @@
     #+END_SRC
 
 *** Set up global key bindings.
-    - Quickly toggle =auto-fill-mode=
-      #+BEGIN_SRC emacs-lisp
-        (global-set-key (kbd "C-c q") 'auto-fill-mode)
-      #+END_SRC
+- Quickly toggle =auto-fill-mode=
+  #+BEGIN_SRC emacs-lisp
+    (global-set-key (kbd "C-c q") 'auto-fill-mode)
+  #+END_SRC
 
-    - Automatically reindent current line and new line on =RET=
-      #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "RET") 'reindent-then-newline-and-indent)      
-      #+END_SRC
+ - Automatically reindent current line and new line on =RET=
+  #+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "RET") 'reindent-then-newline-and-indent)      
+  #+END_SRC
 
-    - Kill word backward
-      #+BEGIN_SRC emacs-lisp
-        (global-set-key (kbd "C-M-h") 'backward-kill-word)
-      #+END_SRC
+- Kill word backward
+  #+BEGIN_SRC emacs-lisp
+    (global-set-key (kbd "C-M-h") 'backward-kill-word)
+  #+END_SRC
+
+ - Backspace
+#+BEGIN_SRC emacs-lisp
+  (define-key global-map "\C-h" 'backward-delete-char)
+#+END_SRC
 *** Clean up some of the graphical defaults.
     #+BEGIN_SRC emacs-lisp
       (set-scroll-bar-mode nil)
@@ -114,10 +119,15 @@
       (global-set-key "\C-x\ \C-r" 'recentf-open-files)
     #+END_SRC
 
+*** Expand Region
+#+BEGIN_SRC emacs-lisp
+  (package-safe-install 'expand-region)
+  (global-set-key (kbd "C-=") 'er/expand-region)
+  (put 'narrow-to-region 'disabled nil)
+#+END_SRC
 *** Fancy Narrowing
 #+BEGIN_SRC emacs-lisp
   (package-safe-install 'fancy-narrow)
-  (fancy-narrow-mode)
 #+END_SRC
 
 *** Highlight matching parentheses
@@ -142,9 +152,14 @@
       (fset 'yes-or-no-p 'y-or-n-p)
       (delete-selection-mode t)
       (blink-cursor-mode t)
+      (setq ring-bell-function 'ignore)
     #+END_SRC
 
 ** Org Mode
+
+*TODO: configure export to gfm*
+*TODO: configure export to reveal.js*
+*TODO: author export to hugo*
 
 *** Org-Mode Packages
    #+BEGIN_SRC emacs-lisp
@@ -232,18 +247,42 @@
               "* TODO %?\n  %i\n")
              ("j" "Journal" entry (file+datetree "~/org/journal.org")
               "* %?\nEntered on %U\n  %i\n  %a")))
+
+     ;; any headline with level <= 2 is a target
+     (setq org-refile-targets '((nil :maxlevel . 2)
+                                     ; all top-level headlines in the
+                                     ; current buffer are used (first) as a
+                                     ; refile target
+                                (org-agenda-files :maxlevel . 2)))
+
+     ;; provide refile targets as paths, including the file name
+     ;; (without directory) as level 1 of the path
+     (setq org-refile-use-outline-path 'file)
+
+     ;; allow to create new nodes (must be confirmed by the user) as
+     ;; refile targets
+     (setq org-refile-allow-creating-parent-nodes 'confirm)
+
+     ;; refile only within the current buffer
+     (defun my/org-refile-within-current-buffer ()
+       "Move the entry at point to another heading in the current buffer."
+       (interactive)
+       (let ((org-refile-targets '((nil :maxlevel . 5))))
+         (org-refile)))
    #+END_SRC
 
+*** Export to Github Flavored Markdown
+#+BEGIN_SRC emacs-lisp
+  (require 'ox-gfm)
+#+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
   (package-safe-install 'magit)
 #+END_SRC
 
-*** TODO Document use of Magit
-
-*** TODO Provide links to useful resources
-
-*** TODO Provide link to =magit-gitflow= 
+*TODO: Document use of Magit*
+*TODO: Provide links to useful resources*
+*TODO: Provide link to =magit-gitflow=*
 
 ** Shell
 Set the shell environment to be emacs environment
@@ -251,6 +290,30 @@ Set the shell environment to be emacs environment
   (require 'exec-path-from-shell)
   (when (memq window-system '(mac ns))
     (exec-path-from-shell-initialize))
+#+END_SRC
+
+A few configurations and custom defined shell methods for
+eshell. Eshell is a terminal replacement implemented entirely in
+elisp. This sounds weird. It is weird. It has the benefit of having
+elisp as a first class language so you can do things like: =cat
+foo/bar/baz > (switch-to-buffer "*test*")= which opens the file
+contents in a new buffer named =*test*=.
+#+BEGIN_SRC emacs-lisp
+  (push "/usr/local/bin" exec-path)
+    
+  (setenv "PATH" (concat (getenv "PATH") ":" "/usr/local/bin"))
+
+  ;; if OSX...
+  (if (equal window-system 'ns)
+      (push "/Applications/Emacs.app/Contents/MacOS/bin" exec-path))
+
+  (setq eshell-history-size nil) ;; sets it to $HISTSIZE
+      
+  (defun eshell/clear ()
+    "clear the eshell buffer."
+    (interactive)
+    (let ((inhibit-read-only t))
+      (erase-buffer)))  
 #+END_SRC
 
 ** Go-mode Configuration
@@ -282,4 +345,10 @@ Extracted from my previous =.emacs= file.
                              (company-mode)))
 
    (setq gofmt-command "goimports")
+#+END_SRC
+
+** Babel
+*** Golang support
+#+BEGIN_SRC emacs-lisp
+(require 'ob-go)
 #+END_SRC
