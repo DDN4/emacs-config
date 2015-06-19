@@ -1,11 +1,3 @@
-cd ../swagger
-ls
-tree swagger-ui/
-cd -
-mkdir ui
-cp -R ../swagger/swagger-ui/ ./ui/
-tree ui
-cd ui
 ls
 mv swagger-ui/ default/
 ls
@@ -126,3 +118,11 @@ ls ..
 ls ..
 rm -rf ../test1 ../test2
 ls ..
+cd code/golang/src/github.com/pivotalservices/pezinventory/
+git status
+git pull
+clear
+go install github.com/onsi/prolific
+go get github.com/onsi/prolific
+prolific template
+ls

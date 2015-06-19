@@ -4,12 +4,12 @@
     - [ ] Configure =init.el= to support reading multiple org files
     - [ ] Configure paths to keep =.emacs.d= as clean as possible
     - [X] Configure Magit
-    - [4/5] Configure go-mode
+    - [5/5] Configure go-mode
       - [X] goimports
       - [X] go-eldoc
       - [X] golint
       - [X] company-go
-      - [ ] flycheck
+      - [X] flycheck
     - [1/3] Configure Babel for Golang
       - [X] configure ob-go
       - [ ] configure restclient package
@@ -372,4 +372,15 @@ Extracted from my previous =.emacs= file.
 *** Golang support
 #+BEGIN_SRC emacs-lisp
 (require 'ob-go)
+#+END_SRC
+** Markdown
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/emacs-livedown"))
+  (custom-set-variables
+   '(livedown:autostart nil)
+   '(livedown:open t)
+   '(livedown:port 1337))
+  (require 'livedown)
+
+  (global-set-key (kbd "C-M-m") 'livedown:preview)
 #+END_SRC
