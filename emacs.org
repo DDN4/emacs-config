@@ -155,6 +155,15 @@
       (setq ring-bell-function 'ignore)
     #+END_SRC
 
+*** Compiling
+#+BEGIN_SRC emacs-lisp
+  (ignore-errors
+    (require 'ansi-color)
+    (defun my-colorize-compilation-buffer ()
+      (when (eq major-mode 'compilation-mode)
+        (ansi-color-apply-on-region compilation-filter-start (point-max))))
+    (add-hook 'compilation-filter-hook 'my-colorize-compilation-buffer))
+#+END_SRC
 ** Org Mode
 
 *TODO: configure export to gfm*
@@ -277,7 +286,8 @@
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
-  (package-safe-install 'magit)
+    (package-safe-install 'magit)
+    (setq magit-last-seen-setup-instructions "1.4.0")
 #+END_SRC
 
 *TODO: Document use of Magit*
@@ -319,34 +329,45 @@ contents in a new buffer named =*test*=.
 ** Go-mode Configuration
 Extracted from my previous =.emacs= file.
 #+BEGIN_SRC emacs-lisp
-   ;; Assumes PATH environment is properly configured
+  ;; Assumes PATH environment is properly configured
 
-   (setenv "GOPATH" "/Users/dan/code/golang")
+  (setenv "GOPATH" "/Users/dan/code/golang")
 
-   (package-safe-install 'go-mode)
-   (add-hook 'before-save-hook 'gofmt-before-save)
-   (package-safe-install 'go-eldoc)
-   (add-hook 'go-mode-hook 'go-eldoc-setup)
+  (package-safe-install 'go-mode)
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (package-safe-install 'go-eldoc)
+  (add-hook 'go-mode-hook 'go-eldoc-setup)
 
-   ;; golint
-   (add-to-list 'load-path (concat (getenv "GOPATH")  "/src/github.com/golang/lint/misc/emacs"))
-   (package-safe-install 'golint)
+  ;; golint
+  ;; (add-to-list 'load-path (concat (getenv "GOPATH")  "/src/github.com/golang/lint/misc/emacs"))
+  ;; (require 'golint)
 
-   ;; company
-   (package-safe-install 'company)   
-   (package-safe-install 'company-go)
-   (setq company-tooltip-limit 20)   
-   (setq company-idle-delay .3)      
-   (setq company-echo-delay 0)       
-   (setq company-begin-commands '(self-insert-command))
+  ;; goflymake
+  (add-to-list 'load-path (concat (getenv "GOPATH") "/src/github.com/dougm/goflymake"))
+  (require 'go-flymake)
 
-   (add-hook 'go-mode-hook (lambda ()
-                             (set (make-local-variable 'company-backends) '(company-go))
-                             (company-mode)))
+  ;; company
+  (package-safe-install 'company)   
+  (package-safe-install 'company-go)
+  (setq company-tooltip-limit 20)   
+  (setq company-idle-delay .3)      
+  (setq company-echo-delay 0)       
+  (setq company-begin-commands '(self-insert-command))
 
-   (setq gofmt-command "goimports")
+  (add-hook 'go-mode-hook (lambda ()
+                            (set (make-local-variable 'company-backends) '(company-go))
+                            (company-mode)
+                            (if (not (string-match "go" compile-command))
+                                (set (make-local-variable 'compile-command)
+                                     "go build -v && go test -v -coverprofile=coverage.out && go vet"))))
+
+  (setq gofmt-command "goimports")
 #+END_SRC
 
+** Elixir Mode Configuration
+#+BEGIN_SRC emacs-lisp
+  (package-safe-install 'alchemist)
+#+END_SRC
 ** Babel
 *** Golang support
 #+BEGIN_SRC emacs-lisp
