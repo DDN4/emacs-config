@@ -10,12 +10,12 @@
       - [X] golint
       - [X] company-go
       - [X] flycheck
-    - [1/3] Configure Babel for Golang
+    - [2/3] Configure Babel for Golang
       - [X] configure ob-go
-      - [ ] configure restclient package
+      - [X] configure restclient package
       - [ ] test golang block calling rest api
     - [X] Configure eshell
- 
+      
 ** ELPA Repositories
 *** Set up package repositories.
     #+begin_src emacs-lisp
@@ -383,4 +383,8 @@ Extracted from my previous =.emacs= file.
   (require 'livedown)
 
   (global-set-key (kbd "C-M-m") 'livedown:preview)
+#+END_SRC
+** Restclient
+#+BEGIN_SRC emacs-lisp
+  (package-safe-install 'restclient)
 #+END_SRC
