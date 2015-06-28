@@ -1,8 +1,7 @@
 * Emacs Configuration
 ** To-Do Items
     - [X] Define function to safely load packages
-    - [ ] Configure =init.el= to support reading multiple org files
-    - [ ] Configure paths to keep =.emacs.d= as clean as possible
+    - [X] Configure paths to keep =.emacs.d= as clean as possible
     - [X] Configure Magit
     - [5/5] Configure go-mode
       - [X] goimports
@@ -10,11 +9,12 @@
       - [X] golint
       - [X] company-go
       - [X] flycheck
-    - [2/3] Configure Babel for Golang
+    - [3/3] Configure Babel for Golang
       - [X] configure ob-go
-      - [X] configure restclient package
-      - [ ] test golang block calling rest api
+      - [X] configure ob-http
+      - [X] test golang block calling rest api
     - [X] Configure eshell
+    - [ ] Extend use of Helm
       
 ** ELPA Repositories
 *** Set up package repositories.
@@ -163,6 +163,14 @@
       (when (eq major-mode 'compilation-mode)
         (ansi-color-apply-on-region compilation-filter-start (point-max))))
     (add-hook 'compilation-filter-hook 'my-colorize-compilation-buffer))
+#+END_SRC
+
+*** Helm Configuration
+#+BEGIN_SRC emacs-lisp
+  (package-safe-install 'helm)
+  (require 'helm-config)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (helm-mode 1)
 #+END_SRC
 ** Org Mode
 
@@ -373,6 +381,18 @@ Extracted from my previous =.emacs= file.
 #+BEGIN_SRC emacs-lisp
 (require 'ob-go)
 #+END_SRC
+*** ob-http
+#+BEGIN_SRC emacs-lisp
+  (require 'ob-http)
+  (require 'ob-http-mode)
+#+END_SRC
+*** load languages
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (http . t)))
+#+END_SRC
 ** Markdown
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/emacs-livedown"))
@@ -384,7 +404,10 @@ Extracted from my previous =.emacs= file.
 
   (global-set-key (kbd "C-M-m") 'livedown:preview)
 #+END_SRC
-** Restclient
+** Evil Mode
+Disabled by default.  Can toggle with =M-x evil-mode=
 #+BEGIN_SRC emacs-lisp
-  (package-safe-install 'restclient)
+  (package-safe-install 'evil)
+  (require 'evil)
+  (evil-mode 0)
 #+END_SRC

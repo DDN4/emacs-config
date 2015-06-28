@@ -1,0 +1,3 @@
+[submodule "lisp/ob-http"]
+	path = lisp/ob-http
+	url = git@github.com:zweifisch/ob-http
