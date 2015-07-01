@@ -1,21 +1,6 @@
 * Emacs Configuration
 ** To-Do Items
-    - [X] Define function to safely load packages
-    - [X] Configure paths to keep =.emacs.d= as clean as possible
-    - [X] Configure Magit
-    - [5/5] Configure go-mode
-      - [X] goimports
-      - [X] go-eldoc
-      - [X] golint
-      - [X] company-go
-      - [X] flycheck
-    - [3/3] Configure Babel for Golang
-      - [X] configure ob-go
-      - [X] configure ob-http
-      - [X] test golang block calling rest api
-    - [X] Configure eshell
-    - [ ] Extend use of Helm
-      
+- [ ] None at the moment      
 ** ELPA Repositories
 *** Set up package repositories.
     #+begin_src emacs-lisp
@@ -48,6 +33,7 @@
    #+end_src
 
 ** Globals
+
 *** Path Configuration
     #+BEGIN_SRC emacs-lisp
       (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -383,15 +369,12 @@ Extracted from my previous =.emacs= file.
   ;; Assumes PATH environment is properly configured
 
   (setenv "GOPATH" "/Users/dan/code/golang")
+  (setenv "PATH" (concat (getenv "PATH") ":" (getenv "GOPATH") "/bin"))
 
   (package-safe-install 'go-mode)
   (add-hook 'before-save-hook 'gofmt-before-save)
   (package-safe-install 'go-eldoc)
   (add-hook 'go-mode-hook 'go-eldoc-setup)
-
-  ;; golint
-  ;; (add-to-list 'load-path (concat (getenv "GOPATH")  "/src/github.com/golang/lint/misc/emacs"))
-  ;; (require 'golint)
 
   ;; goflymake
   (add-to-list 'load-path (concat (getenv "GOPATH") "/src/github.com/dougm/goflymake"))
